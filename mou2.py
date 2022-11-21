@@ -3,8 +3,8 @@ import numpy as np
 import mediapipe as mp
 import time
 import pyautogui
+import mouse
 import math
-pyautogui.FAILSAFE = False
 
 """
 import pygame
@@ -23,8 +23,8 @@ pTime = 0
 lila = (255,0,255)
 
 sz, m = pyautogui.size()
-x = sz / 640
-y = m / 480
+x = sz / 540
+y = m / 380
 
 
 mpHands = mp.solutions.hands
@@ -44,16 +44,18 @@ while run:
         for handLMs in hand_landmarks:
                 mpDraw.draw_landmarks(img, handLMs, mpHands.HAND_CONNECTIONS)
         
-        #lista = []
         lista = []
         for handLms in results.multi_hand_landmarks: # working with each hand
             for id, lm in enumerate(handLms.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
                 lista.append([id,cx,cy])
-            x1, y1 = lista[8][1:]
+            x1, y1 = lista[8] [1:] 
             x2, y2 = lista[12][1:]
-
+            x1 -= 100
+            y1 -= 100
+            x2 -= 100
+            y2 -= 100
 
             ujjak = []
 
@@ -67,15 +69,16 @@ while run:
                 else:
                     ujjak.append(0)
                 
-            if id == 8 :
+            if ujjak[1] == 1 and ujjak[2] == 0:
                 print(cx, cy, "a")
                 szel = (cx - 100) * x
                 mag =  (cy) * y
                 print(szel, mag)
 
-                pyautogui.moveTo(int(szel), int(mag))
-                cv2.circle(img, (cx, cy), 25, (255, 0, 255), cv2.FILLED)
-        cv2.rectangle(img,(100,100),(camsz-100, camm-100), lila,2)
+
+                mouse.move(szel,mag)
+                cv2.circle(img, (x1+100, y1+100), 25, (255, 0, 255), cv2.FILLED)
+            cv2.rectangle(img,(100,100),(camsz-100, camm-100), lila,2)
 
 
 
@@ -86,5 +89,5 @@ while run:
     fps = 1/(cTime-pTime)
     pTime = cTime
     cv2.putText(img,str(int(fps)),(20,50),cv2.FONT_HERSHEY_PLAIN,3,(255,0,0),3)
-    cv2.imshow("Kep", img)
+    cv2.imshow("Project", img)
     cv2.waitKey(1)
